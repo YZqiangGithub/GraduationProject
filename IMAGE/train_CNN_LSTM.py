@@ -6,7 +6,7 @@ from tensorflow.keras.layers import Conv1D, MaxPooling1D, Embedding, Dropout, LS
 from tensorflow.keras.preprocessing import sequence
 
 subtrainLabel = pd.read_csv('./subtrainLabels.csv')
-subtrain_feature = pd.read_csv('./data/train/imgfeature.csv')
+subtrain_feature = pd.read_csv('data/train/asm_imgfeature.csv')
 subtrain = pd.merge(subtrainLabel,subtrain_feature,on = 'Id')
 
 #data process

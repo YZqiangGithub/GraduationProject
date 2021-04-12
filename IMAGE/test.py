@@ -1,14 +1,15 @@
 from tensorflow import keras
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
+from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.layers import Conv1D, MaxPooling1D, GlobalMaxPooling1D, Dropout, LSTM, Dense, Activation
 from tensorflow.keras.preprocessing import sequence
 
-subtrainLabel = pd.read_csv('./subtrainLabels.csv')
-subtrain_feature = pd.read_csv('data/train/asm_imgfeature.csv')
-subtrain = pd.merge(subtrainLabel,subtrain_feature,on = 'Id')
-total_len = 1600
+datapath = './data/trainData/'
+train = pd.read_csv('subtrainLabels.csv')
+total_len = 10000
 # Embedding
 vocablen = 400
 embedding_size = 128
@@ -22,19 +23,22 @@ pool_size = 4
 batch_size = 30
 epochs = 100
 
-dataset = subtrain.values
-lable = dataset[:,1] - 1
-X = dataset[:,2:]
-tmp = np.array(X)
-X = tmp.reshape(len(tmp), total_len,1)
+train_image = []
+for i in tqdm(range(train.shape[0])):
+    txt = np.loadtxt(datapath + train['Id'][i])
+    txt = txt.astype('uint8')
+    img = txt.reshape(-1, 1)
+    img = img / 255
+    train_image.append(img)
+X = np.array(train_image)
 
+y = train['Class'].values - 1
+y = to_categorical(y)
 
-x_train, x_test, y_train, y_test = train_test_split(X,lable,test_size = 0.3)
+x_train, x_test,y_train, y_test = train_test_split(X, y , test_size=0.3)
 
 x_train = sequence.pad_sequences(x_train, maxlen=total_len)
 x_test = sequence.pad_sequences(x_test, maxlen=total_len)
-y_train = keras.backend.cast_to_floatx(y_train)
-y_test = keras.backend.cast_to_floatx(y_test)
 
 model = keras.Sequential()
 model.add(Conv1D(filters,
@@ -51,7 +55,7 @@ model.add(Dropout(0.5))
 model.add(Dense(128))
 model.add(Dense(9, activation='softmax'))
 
-model.compile(optimizer='adam', loss= keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+model.compile(optimizer='adam', loss= 'categorical_crossentropy',
               metrics=['accuracy'])
 
 print('Train...')

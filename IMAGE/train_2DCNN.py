@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 subtrainLabel = pd.read_csv('./subtrainLabels.csv')
-subtrain_feature = pd.read_csv('./data/train/imgfeature.csv')
+subtrain_feature = pd.read_csv('data/train/asm_imgfeature.csv')
 subtrain = pd.merge(subtrainLabel,subtrain_feature,on = 'Id')
 img_height, img_width = 40, 40
 

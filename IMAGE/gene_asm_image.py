@@ -67,4 +67,4 @@ for fid, imf in mapimg.items():
     dataFrameList.append(standard)
 
 df = pd.DataFrame(dataFrameList)
-df.to_csv('imgfeature.csv', index = False)
+df.to_csv('./data/train/asm_imgfeature.csv', index = False)
