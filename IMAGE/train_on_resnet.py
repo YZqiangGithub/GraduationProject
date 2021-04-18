@@ -12,37 +12,42 @@ from Resnet_test import resnet50
 def main():
     data_root = os.path.abspath(os.path.join(os.getcwd(), "./"))  # get data root path
     image_path = os.path.join(data_root, "data")  # flower data set path
-    train_dir = os.path.join(image_path, "train")
-    validation_dir = os.path.join(image_path, "val")
+    train_dir = os.path.join(image_path, "png_train")
+    validation_dir = os.path.join(image_path, "png_val")
     assert os.path.exists(train_dir), "cannot find {}".format(train_dir)
     assert os.path.exists(validation_dir), "cannot find {}".format(validation_dir)
 
     im_height = 256
     im_width = 256
     batch_size = 16
-    epochs = 20
+    epochs = 40
     num_classes = 9
 
-    _R_MEAN = 123.68
-    _G_MEAN = 116.78
-    _B_MEAN = 103.94
+    # _R_MEAN = 123.68
+    # _G_MEAN = 116.78
+    # _B_MEAN = 103.94
 
-    def pre_function(img):
-        # img = im.open('test.jpg')
-        # img = np.array(img).astype(np.float32)
-        img = img - [_R_MEAN, _G_MEAN, _B_MEAN]
-
-        return img
+    # def pre_function(img):
+    #     # img = im.open('test.jpg')
+    #     # img = np.array(img).astype(np.float32)
+    #     img = img - [_R_MEAN, _G_MEAN, _B_MEAN]
+    #
+    #     return img
 
     # data generator with data augmentation
-    train_image_generator = ImageDataGenerator(horizontal_flip=True,
-                                               preprocessing_function=pre_function)
+    # train_image_generator = ImageDataGenerator(horizontal_flip=True,
+    #                                            preprocessing_function=pre_function)
 
-    validation_image_generator = ImageDataGenerator(preprocessing_function=pre_function)
+    # validation_image_generator = ImageDataGenerator(preprocessing_function=pre_function)
+
+    train_image_generator = ImageDataGenerator()
+
+    validation_image_generator = ImageDataGenerator()
 
     train_data_gen = train_image_generator.flow_from_directory(directory=train_dir,
                                                                batch_size=batch_size,
                                                                shuffle=True,
+                                                               color_mode='grayscale',
                                                                target_size=(im_height, im_width),
                                                                class_mode='categorical')
     total_train = train_data_gen.n
@@ -61,6 +66,7 @@ def main():
                                                                   batch_size=batch_size,
                                                                   shuffle=False,
                                                                   target_size=(im_height, im_width),
+                                                                  color_mode='grayscale',
                                                                   class_mode='categorical')
     # img, _ = next(train_data_gen)
     total_val = val_data_gen.n
@@ -68,14 +74,15 @@ def main():
                                                                            total_val))
 
     feature = resnet50(num_classes=5, include_top=False)
-    # feature.build((None, 224, 224, 3))  # when using subclass model
+    # feature.build((None, 256, 256, 1))  # when using subclass model
 
     # 直接下载我转好的权重
     # download weights 链接: https://pan.baidu.com/s/1tLe9ahTMIwQAX7do_S59Zg  密码: u199
-    pre_weights_path = './pretrain_weights.ckpt'
-    assert len(glob.glob(pre_weights_path+"*")), "cannot find {}".format(pre_weights_path)
-    feature.load_weights(pre_weights_path)
-    feature.trainable = False
+    # pre_weights_path = './save_weights/jpg_weights/pretrain_weights.ckpt'
+    # assert len(glob.glob(pre_weights_path+"*")), "cannot find {}".format(pre_weights_path)
+    # feature.load_weights(pre_weights_path)
+    # feature.trainable = False
+    feature.trainable = True
     feature.summary()
 
     model = tf.keras.Sequential([feature,
@@ -84,8 +91,9 @@ def main():
                                  tf.keras.layers.Dense(1024, activation="relu"),
                                  tf.keras.layers.Dropout(rate=0.5),
                                  tf.keras.layers.Dense(num_classes),
-                                 tf.keras.layers.Softmax()])
-    # model.build((None, 224, 224, 3))
+                                 tf.keras.layers.Softmax()
+                                 ])
+    # model.build((None, 256, 256, 3))
     model.summary()
 
     # using keras low level api for training

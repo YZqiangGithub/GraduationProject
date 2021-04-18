@@ -20,7 +20,7 @@ from PIL import Image
 
 def getMatrixFromHex(filename, tro_class):
     hexarr = []
-    savename = datapath + str(tro_class) + '/' + filename + '.jpg'
+    savename = pngdatapath + str(tro_class) + '/' + filename + '.png'
     filename = basepath + filename + '.bytes'
     with open(filename, 'rb') as f:
         for line in f:
@@ -28,12 +28,13 @@ def getMatrixFromHex(filename, tro_class):
     txt = np.resize(hexarr,(256,256))
     txt = np.uint8(txt)
     im = Image.fromarray(txt)
-    im = im.convert("RGB")
+    im = im.convert("L")
     im.save(savename)
 
 basepath = '/media/yzq/新加卷/subtrain/'
-datapath = './data/trainData/'
-subtrianLabels = pd.read_csv('/media/yzq/新加卷/subtrainLabels.csv')
+jpgdatapath = './data/bytes_jpg/'
+pngdatapath = './data/bytes_png/'
+subtrianLabels = pd.read_csv('./subtrainLabels.csv')
 maxImgLen = 0
 minImgLen = float('inf')
 for i in tqdm(range(subtrianLabels.shape[0])):

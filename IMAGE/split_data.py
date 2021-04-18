@@ -2,10 +2,12 @@ import os
 from shutil import copy, rmtree
 import random
 
-def mk_file(file_path:str):
+
+def mk_file(file_path: str):
     if os.path.exists(file_path):
         rmtree(file_path)
     os.makedirs(file_path)
+
 
 def main():
     # 保证随机可复现
@@ -16,22 +18,25 @@ def main():
 
     # 指向你解压后的flower_photos文件夹
     cwd = os.getcwd()
-    data_root = os.path.join(cwd,"data")
-    origin_path = os.path.join(data_root, "bytes_photo")
+    data_root = os.path.join(cwd, "data")
+    # origin_path = os.path.join(data_root, "bytes_jpg")
+    origin_path = os.path.join(data_root, "bytes_png")
     assert os.path.exists(origin_path), "path '{}' does not exist.".format(origin_path)
 
     tro__class = [cla for cla in os.listdir(origin_path)
-                    if os.path.isdir(os.path.join(origin_path, cla))]
+                  if os.path.isdir(os.path.join(origin_path, cla))]
 
     # 建立保存训练集的文件夹
-    train_root = os.path.join(data_root, "train")
+    # train_root = os.path.join(data_root, "jpg_train")
+    train_root = os.path.join(data_root, "png_train")
     mk_file(train_root)
     for cla in tro__class:
         # 建立每个类别对应的文件夹
         mk_file(os.path.join(train_root, cla))
 
     # 建立保存验证集的文件夹
-    val_root = os.path.join(data_root, "val")
+    # val_root = os.path.join(data_root, "jpg_val")
+    val_root = os.path.join(data_root, "png_val")
     mk_file(val_root)
     for cla in tro__class:
         # 建立每个类别对应的文件夹
@@ -58,6 +63,7 @@ def main():
         print()
 
     print("processing done!")
+
 
 if __name__ == '__main__':
     main()
