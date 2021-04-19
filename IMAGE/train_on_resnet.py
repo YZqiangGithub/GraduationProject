@@ -12,8 +12,10 @@ from Resnet_test import resnet50
 def main():
     data_root = os.path.abspath(os.path.join(os.getcwd(), "./"))  # get data root path
     image_path = os.path.join(data_root, "data")  # flower data set path
-    train_dir = os.path.join(image_path, "png_train")
-    validation_dir = os.path.join(image_path, "png_val")
+    # train_dir = os.path.join(image_path, "png_train")
+    # validation_dir = os.path.join(image_path, "png_val")
+    train_dir = os.path.join(image_path, "jpg_train")
+    validation_dir = os.path.join(image_path, "jpg_val")
     assert os.path.exists(train_dir), "cannot find {}".format(train_dir)
     assert os.path.exists(validation_dir), "cannot find {}".format(validation_dir)
 
@@ -47,7 +49,7 @@ def main():
     train_data_gen = train_image_generator.flow_from_directory(directory=train_dir,
                                                                batch_size=batch_size,
                                                                shuffle=True,
-                                                               color_mode='grayscale',
+                                                               # color_mode='grayscale',
                                                                target_size=(im_height, im_width),
                                                                class_mode='categorical')
     total_train = train_data_gen.n
@@ -66,7 +68,7 @@ def main():
                                                                   batch_size=batch_size,
                                                                   shuffle=False,
                                                                   target_size=(im_height, im_width),
-                                                                  color_mode='grayscale',
+                                                                  # color_mode='grayscale',
                                                                   class_mode='categorical')
     # img, _ = next(train_data_gen)
     total_val = val_data_gen.n
@@ -159,7 +161,7 @@ def main():
         # only save best weights
         if val_accuracy.result() > best_val_acc:
             best_val_acc = val_accuracy.result()
-            model.save_weights("./save_weights/resNet_50.ckpt", save_format="tf")
+            model.save_weights("./save_weights/jpg_resNet_50.ckpt", save_format="tf")
 
 
 if __name__ == '__main__':

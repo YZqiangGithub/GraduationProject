@@ -98,7 +98,7 @@ def _make_layer(block, in_channel, channel, block_num, name, strides=1):
 def _resnet(block, blocks_num, im_width=224, im_height=224, num_classes=1000, include_top=True):
     # tensorflow中的tensor通道排序是NHWC
     # (None, 256, 256, 1)
-    input_image = layers.Input(shape=(im_height, im_width, 1), dtype="float32")
+    input_image = layers.Input(shape=(im_height, im_width, 3), dtype="float32")
     x = layers.Conv2D(filters=64, kernel_size=7, strides=2,
                       padding="SAME", use_bias=False, name="conv1")(input_image)
     x = layers.BatchNormalization(momentum=0.9, epsilon=1e-5, name="conv1/BatchNorm")(x)
