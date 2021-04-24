@@ -21,9 +21,9 @@ def main():
     epochs = 75
     num_classes = 9
 
-    train_image_generator = ImageDataGenerator()
+    train_image_generator = ImageDataGenerator(rescale=1/255)
 
-    validation_image_generator = ImageDataGenerator()
+    validation_image_generator = ImageDataGenerator(rescale=1/255)
 
     train_data_gen = train_image_generator.flow_from_directory(directory=train_dir,
                                                                batch_size=batch_size,
@@ -107,7 +107,6 @@ def main():
         train_bar = tqdm(range(total_train // batch_size))
         for step in train_bar:
             images, labels = next(train_data_gen)
-            images = images / 255.0
             train_step(images, labels)
 
             # print train process
@@ -120,7 +119,6 @@ def main():
         val_bar = tqdm(range(total_val // batch_size))
         for step in val_bar:
             test_images, test_labels = next(val_data_gen)
-            test_images = test_images / 255.0
             val_step(test_images, test_labels)
 
             # print val process
