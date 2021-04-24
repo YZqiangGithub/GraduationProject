@@ -6,9 +6,9 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 
 subtrainLabel = pd.read_csv('./subtrainLabels.csv')
-subtrain_feature = pd.read_csv('data/train/asm_imgfeature.csv')
+subtrain_feature = pd.read_csv('data/asm_seq_train/asm_imgfeature.csv')
 subtrain = pd.merge(subtrainLabel,subtrain_feature,on = 'Id')
-img_height, img_width = 40, 256
+img_height, img_width = 40, 40
 
 dataset = subtrain.values
 lable = dataset[:,1] - 1

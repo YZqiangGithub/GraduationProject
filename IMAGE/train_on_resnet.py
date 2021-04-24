@@ -1,5 +1,4 @@
 import os
-import glob
 import json
 
 import tensorflow as tf
@@ -11,16 +10,14 @@ from Resnet_test import resnet50
 
 def main():
     data_root = os.path.abspath(os.path.join(os.getcwd(), "./"))  # get data root path
-    image_path = os.path.join(data_root, "data")  # flower data set path
-    # train_dir = os.path.join(image_path, "png_train")
-    # validation_dir = os.path.join(image_path, "png_val")
-    train_dir = os.path.join(image_path, "jpg_train")
-    validation_dir = os.path.join(image_path, "jpg_val")
+    image_path = os.path.join(data_root, "data")
+    train_dir = os.path.join(image_path, "asm_png_train")
+    validation_dir = os.path.join(image_path, "asm_png_val")
     assert os.path.exists(train_dir), "cannot find {}".format(train_dir)
     assert os.path.exists(validation_dir), "cannot find {}".format(validation_dir)
 
-    im_height = 256
-    im_width = 256
+    im_height = 32
+    im_width = 32
     batch_size = 16
     epochs = 40
     num_classes = 9
@@ -49,7 +46,7 @@ def main():
     train_data_gen = train_image_generator.flow_from_directory(directory=train_dir,
                                                                batch_size=batch_size,
                                                                shuffle=True,
-                                                               # color_mode='grayscale',
+                                                               color_mode='grayscale',
                                                                target_size=(im_height, im_width),
                                                                class_mode='categorical')
     total_train = train_data_gen.n
@@ -68,14 +65,14 @@ def main():
                                                                   batch_size=batch_size,
                                                                   shuffle=False,
                                                                   target_size=(im_height, im_width),
-                                                                  # color_mode='grayscale',
+                                                                  color_mode='grayscale',
                                                                   class_mode='categorical')
     # img, _ = next(train_data_gen)
     total_val = val_data_gen.n
     print("using {} images for training, {} images for validation.".format(total_train,
                                                                            total_val))
 
-    feature = resnet50(num_classes=5, include_top=False)
+    feature = resnet50(num_classes=num_classes,im_height=im_height, im_width=im_width, include_top=False)
     # feature.build((None, 256, 256, 1))  # when using subclass model
 
     # 直接下载我转好的权重
@@ -90,7 +87,7 @@ def main():
     model = tf.keras.Sequential([feature,
                                  tf.keras.layers.GlobalAvgPool2D(),
                                  tf.keras.layers.Dropout(rate=0.5),
-                                 tf.keras.layers.Dense(1024, activation="relu"),
+                                 tf.keras.layers.Dense(256, activation="relu"),
                                  tf.keras.layers.Dropout(rate=0.5),
                                  tf.keras.layers.Dense(num_classes),
                                  tf.keras.layers.Softmax()
@@ -161,7 +158,7 @@ def main():
         # only save best weights
         if val_accuracy.result() > best_val_acc:
             best_val_acc = val_accuracy.result()
-            model.save_weights("./save_weights/jpg_resNet_50.ckpt", save_format="tf")
+            model.save_weights("./save_weights/resNet_50.ckpt", save_format="tf")
 
 
 if __name__ == '__main__':

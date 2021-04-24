@@ -13,30 +13,45 @@ def main():
     # 保证随机可复现
     random.seed(0)
 
-    # 将数据集中10%的数据划分到验证集中
-    split_rate = 0.1
+    # 将数据集中30%的数据划分到验证集中
+    split_rate = 0.3
+
+    byte_jpg = 'bytes_jpg'
+    byte_png = 'bytes_png'
+    asm_jpg = 'asm_jpg'
+    asm_png = 'asm_png'
+
+    asm_png_train = 'asm_png_train'
+    asm_jpg_train = 'asm_jpg_train'
+    byte_png_train = "byte_png_train"
+    byte_jpg_train = 'byte_jpg_train'
+    asm_jpg_val = "asm_jpg_val"
+    asm_png_val = 'asm_png_val'
+    byte_png_val = "byte_png_val"
+    byte_jpg_val = "byte_jpg_val"
+
 
     # 指向你解压后的flower_photos文件夹
     cwd = os.getcwd()
     data_root = os.path.join(cwd, "data")
-    # origin_path = os.path.join(data_root, "bytes_jpg")
-    origin_path = os.path.join(data_root, "bytes_png")
+    # origin_path = os.path.join(data_root, byte_png)
+    origin_path = os.path.join(data_root, asm_png)
     assert os.path.exists(origin_path), "path '{}' does not exist.".format(origin_path)
 
     tro__class = [cla for cla in os.listdir(origin_path)
                   if os.path.isdir(os.path.join(origin_path, cla))]
 
     # 建立保存训练集的文件夹
-    # train_root = os.path.join(data_root, "jpg_train")
-    train_root = os.path.join(data_root, "png_train")
+    # train_root = os.path.join(data_root, byte_png_train)
+    train_root = os.path.join(data_root, asm_png_train)
     mk_file(train_root)
     for cla in tro__class:
         # 建立每个类别对应的文件夹
         mk_file(os.path.join(train_root, cla))
 
     # 建立保存验证集的文件夹
-    # val_root = os.path.join(data_root, "jpg_val")
-    val_root = os.path.join(data_root, "png_val")
+    # val_root = os.path.join(data_root, byte_png_val)
+    val_root = os.path.join(data_root, asm_png_val)
     mk_file(val_root)
     for cla in tro__class:
         # 建立每个类别对应的文件夹
