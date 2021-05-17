@@ -11,13 +11,13 @@ from Resnet_test import resnet50
 def main():
     data_root = os.path.abspath(os.path.join(os.getcwd(), "./"))  # get data root path
     image_path = os.path.join(data_root, "data")
-    train_dir = os.path.join(image_path, "asm_png_train")
-    validation_dir = os.path.join(image_path, "asm_png_val")
+    train_dir = os.path.join(image_path, "byte_png_train")
+    validation_dir = os.path.join(image_path, "byte_png_val")
     assert os.path.exists(train_dir), "cannot find {}".format(train_dir)
     assert os.path.exists(validation_dir), "cannot find {}".format(validation_dir)
 
-    im_height = 32
-    im_width = 32
+    im_height = 256
+    im_width = 256
     batch_size = 16
     epochs = 40
     num_classes = 9
@@ -39,9 +39,9 @@ def main():
 
     # validation_image_generator = ImageDataGenerator(preprocessing_function=pre_function)
 
-    train_image_generator = ImageDataGenerator()
+    train_image_generator = ImageDataGenerator(rescale=1/255)
 
-    validation_image_generator = ImageDataGenerator()
+    validation_image_generator = ImageDataGenerator(rescale=1/255)
 
     train_data_gen = train_image_generator.flow_from_directory(directory=train_dir,
                                                                batch_size=batch_size,

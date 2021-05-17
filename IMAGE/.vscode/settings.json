@@ -1,0 +1,6 @@
+{
+    "python.venvFolders": [
+        "~/anaconda3/envs/TF2/bin"
+    ],
+    "python.pythonPath": "/home/yzq/anaconda3/envs/TF2/bin/python"
+}

@@ -9,6 +9,7 @@ subtrainLabel = pd.read_csv('./subtrainLabels.csv')
 subtrain_feature = pd.read_csv('data/asm_seq_train/asm_imgfeature.csv')
 subtrain = pd.merge(subtrainLabel,subtrain_feature,on = 'Id')
 img_height, img_width = 40, 40
+epoch = 200
 
 dataset = subtrain.values
 lable = dataset[:,1] - 1
@@ -51,8 +52,4 @@ model.add(keras.layers.Dense(9))
 model.compile(optimizer='adam', loss= keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-model.fit(x_train, y_train, epochs=75)
-
-test_loss, test_accu = model.evaluate(x_test,y_test, verbose=2)
-
-print("accuracy : ", test_accu)
+model.fit(x_train, y_train, epochs=epoch, validation_data=(x_test,y_test))

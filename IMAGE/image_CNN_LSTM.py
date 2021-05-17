@@ -4,7 +4,7 @@ import json
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tqdm import tqdm
-from tensorflow.keras.layers import Dense, Conv1D, LSTM, Flatten, TimeDistributed, MaxPooling1D, Dropout
+from tensorflow.keras.layers import Dense, Conv1D, LSTM, Flatten, TimeDistributed, MaxPooling1D, Dropout,  Bidirectional
 
 
 def main():
@@ -62,7 +62,8 @@ def main():
         TimeDistributed(Dropout(0.5)),
         TimeDistributed(Flatten()),
         TimeDistributed(Dense(256)),
-        LSTM(256, name='lstm_layer'),
+        Bidirectional(LSTM(256, name='lstm_layer', return_sequences=True) ),
+        Bidirectional(LSTM(128)),
         Dense(128, activation='relu'),
         Dense(num_classes, activation='softmax')
     ])
