@@ -3,8 +3,9 @@ import json
 
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.python.keras.backend import dropout
 from tqdm import tqdm
-from tensorflow.keras.layers import Dense, Conv1D, LSTM, Flatten, TimeDistributed, MaxPooling1D, Dropout,  Bidirectional
+from tensorflow.keras.layers import Dense, Conv1D, LSTM, Flatten, TimeDistributed, MaxPooling1D, Dropout,  Bidirectional, Conv2D,MaxPool2D
 
 
 def main():
@@ -18,7 +19,7 @@ def main():
     im_height = 256
     im_width = 256
     batch_size = 16
-    epochs = 75
+    epochs = 35
     num_classes = 9
 
     train_image_generator = ImageDataGenerator(rescale=1/255)
@@ -55,18 +56,30 @@ def main():
                                                                            total_val))
 
     model = tf.keras.Sequential([
-        TimeDistributed(Conv1D(64, 3, input_shape=(im_height, im_width, 1), activation='relu')),
-        TimeDistributed(MaxPooling1D(pool_size=2)),
-        TimeDistributed(Conv1D(128, 3, activation='relu')),
-        TimeDistributed(MaxPooling1D(pool_size=2)),
+        TimeDistributed(Conv1D(64, 5, input_shape=(im_height, im_width, 1), activation='relu')),
+        TimeDistributed(MaxPooling1D(pool_size=4)),
+        TimeDistributed(Conv1D(128, 4, activation='relu')),
+        TimeDistributed(MaxPooling1D(pool_size=3)),
         TimeDistributed(Dropout(0.5)),
         TimeDistributed(Flatten()),
         TimeDistributed(Dense(256)),
         Bidirectional(LSTM(256, name='lstm_layer', return_sequences=True) ),
         Bidirectional(LSTM(128)),
+        # LSTM(70, recurrent_dropout=0.5),
         Dense(128, activation='relu'),
-        Dense(num_classes, activation='softmax')
+        Dense(num_classes,activation='softmax')
     ])
+
+    # model = tf.keras.Sequential([
+    #     Conv2D(64,3,input_shape=(im_height,im_width,1), activation='relu'),
+    #     MaxPool2D(pool_size=(3,3)),
+    #     Conv2D(128,3,activation='relu'),
+    #     MaxPool2D(pool_size=(2,2)),
+    #     Dropout(0.5),
+    #     Flatten(),
+    #     Dense(128),
+    #     Dense(num_classes, activation='softmax') 
+    # ])
 
     # using keras low level api for training
     loss_object = tf.keras.losses.CategoricalCrossentropy(from_logits=False)
@@ -77,6 +90,8 @@ def main():
 
     val_loss = tf.keras.metrics.Mean(name='val_loss')
     val_accuracy = tf.keras.metrics.CategoricalAccuracy(name='val_accuracy')
+
+    res_file = open('./image_CNN_LSTM_trainsteps.txt', mode='a')
 
     @tf.function
     def train_step(images, labels):
@@ -115,6 +130,11 @@ def main():
                                                                                  epochs,
                                                                                  train_loss.result(),
                                                                                  train_accuracy.result())
+            
+        res_file.write("train epoch[{}/{}] loss:{:.3f}, acc:{:.3f}\n".format(epoch + 1,
+                                                                                 epochs,
+                                                                                 train_loss.result(),
+                                                                                 train_accuracy.result()))
 
         # validate
         val_bar = tqdm(range(total_val // batch_size))
@@ -127,11 +147,17 @@ def main():
                                                                                epochs,
                                                                                val_loss.result(),
                                                                                val_accuracy.result())
-
+        
+        res_file.write("valid epoch[{}/{}] loss:{:.3f}, acc:{:.3f}\n".format(epoch + 1,
+                                                                                 epochs,
+                                                                                 val_loss.result(),
+                                                                                 val_accuracy.result()))
+        res_file.flush()
         # only save best weights
         if val_accuracy.result() > best_val_acc:
             best_val_acc = val_accuracy.result()
             model.save_weights("./save_weights/byte_cnn_lstm.ckpt", save_format="tf")
+    res_file.close()  
 
 
 if __name__ == '__main__':

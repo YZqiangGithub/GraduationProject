@@ -9,7 +9,7 @@ subtrainLabel = pd.read_csv('./subtrainLabels.csv')
 subtrain_feature = pd.read_csv('data/asm_seq_train/asm_imgfeature.csv')
 subtrain = pd.merge(subtrainLabel,subtrain_feature,on = 'Id')
 img_height, img_width = 40, 40
-epoch = 200
+epoch = 100
 
 dataset = subtrain.values
 lable = dataset[:,1] - 1

@@ -45,11 +45,12 @@ model.add(Conv1D(filters,
 model.add(Conv1D(filters, kernel_size, activation='relu'))
 model.add(MaxPooling1D(pool_size=pool_size))
 model.add(Conv1D(filters, kernel_size, activation='relu'))
+model.add(MaxPooling1D(pool_size=pool_size))
 model.add(Conv1D(filters, kernel_size, activation='relu'))
 model.add(GlobalMaxPooling1D())
 model.add(Dropout(0.5))
 model.add(Dense(128))
-model.add(Dense(9, activation='softmax'))
+model.add(Dense(9))
 
 model.compile(optimizer='adam', loss= keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])

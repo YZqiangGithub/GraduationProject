@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 subtrainLabel = pd.read_csv('./subtrainLabels.csv')
-subtrain_feature = pd.read_csv('data/train/asm_imgfeature.csv')
+subtrain_feature = pd.read_csv('data/asm_seq_train/asm_imgfeature.csv')
 subtrain = pd.merge(subtrainLabel,subtrain_feature,on = 'Id')
 lable = subtrain.Class
 

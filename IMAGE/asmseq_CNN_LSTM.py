@@ -13,7 +13,7 @@ subtrain = pd.merge(subtrainLabel,subtrain_feature,on = 'Id')
 total_len = 1600
 
 # Training
-batch_size = 30
+batch_size = 64
 epochs = 100
 
 dataset = subtrain.values
@@ -38,10 +38,10 @@ model.add(MaxPooling1D(pool_size=4))
 # model.add(MaxPooling1D(pool_size=3))
 # model.add(Bidirectional(LSTM(64, return_sequences=True)))
 # model.add(Bidirectional(LSTM(64)))
-# model.add(Dense(256))
 model.add(LSTM(70, recurrent_dropout=0.5))
+model.add(Dense(128))
 model.add(Dropout(0.5))
-model.add(Dense(9, activation='softmax'))
+model.add(Dense(9))
 
 model.compile(optimizer='adam', loss= keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
